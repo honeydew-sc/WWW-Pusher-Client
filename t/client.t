@@ -7,13 +7,11 @@ use AnyEvent;
 use Test::More;
 
 BEGIN {
-    unless (use_ok('WWW::Pusher::Client')) {
-        BAIL_OUT("Couldn't load WWW::Pusher::Client");
-        exit;
-    }
-
     unless (defined $ENV{PUSHER_KEY}) {
-        BAIL_OUT("You need a PUSHER_KEY, sorry");
+        plan skip_all => "Not running without PUSHER_KEY env var";
+        done_testing;
+
+        exit 0;
     }
 }
 
@@ -26,6 +24,5 @@ isa_ok($client, 'WWW::Pusher::Client');
 ok($client->ws_url =~ m/ws\.pusherapp\.com.*app.*protocol.*client.*version/, 'ws_url is formatted properly');
 
 $client->send('hello');
-$DB::single=2;
 
 done_testing;

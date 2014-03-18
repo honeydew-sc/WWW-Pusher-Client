@@ -1,4 +1,5 @@
 package WWW::Pusher::Client;
+# ABSTRACT: Laughably incomplete Perl client for Pusher WS API
 
 use strict;
 use warnings;
