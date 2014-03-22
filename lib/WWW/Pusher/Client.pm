@@ -48,11 +48,11 @@ has 'ws_url' => (
 );
 
 has 'ws_conn' => (
-    is => 'ro',
+    is => 'rw',
     lazy => 1,
     builder => sub {
         my $self = shift;
-        return AnyEvent::WebSocket::Client->new->connect($self->ws_url)->recv;
+        return AnyEvent::WebSocket::Client->new->connect($self->ws_url);
     }
 );
 
@@ -95,10 +95,10 @@ sub subscribe {
     }));
 }
 
-sub send {
+sub trigger {
     my $self = shift;
-    my $message = shift;
     my $event = shift // 'ws update';
+    my $message = shift;
 
     $self->ws_conn->send(to_json({
         event => $event,
