@@ -6,6 +6,8 @@ use Data::Printer;
 use AnyEvent;
 use Test::More;
 
+
+
 BEGIN {
     unless (defined $ENV{PUSHER_KEY}) {
         plan skip_all => "Not running without PUSHER_KEY env var";

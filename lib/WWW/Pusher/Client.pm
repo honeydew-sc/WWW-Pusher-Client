@@ -52,7 +52,7 @@ has 'ws_conn' => (
     lazy => 1,
     builder => sub {
         my $self = shift;
-        return AnyEvent::WebSocket::Client->new->connect($self->ws_url);
+        return AnyEvent::WebSocket::Client->new->connect($self->ws_url)->recv;
     }
 );
 
