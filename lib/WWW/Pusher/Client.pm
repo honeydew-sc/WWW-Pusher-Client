@@ -76,22 +76,12 @@ has '_version' => (
     default => '0.001'
 );
 
-
 sub BUILD {
     my $self = shift;
 
-    $self->ws_conn->on(next_message => sub {
-                  $self->subscribe($self->channel);
-              });
-
     $self->ws_conn->on(
-        each_message => sub {
-            my ($conn, $message) = @_;
-            use Data::Dumper; use DDP;
-            p @_;
-            if ($message->body =~ /finish/) {
-                $conn->close();
-            }
+        next_message => sub {
+            $self->subscribe($self->channel);
         });
 }
 
@@ -131,7 +121,7 @@ WWW::Pusher::Client - Laughably incomplete Perl client for Pusher WS API
 
 =head1 VERSION
 
-version 0.001
+version 0.01
 
 =head1 AUTHOR
 

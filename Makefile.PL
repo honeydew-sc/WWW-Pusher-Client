@@ -22,8 +22,6 @@ my %WriteMakefileArgs = (
   "NAME" => "WWW::Pusher::Client",
   "PREREQ_PM" => {
     "AnyEvent::WebSocket::Client" => 0,
-    "DDP" => 0,
-    "Data::Dumper" => 0,
     "JSON" => 0,
     "Moo" => 0,
     "strict" => 0,
@@ -34,7 +32,7 @@ my %WriteMakefileArgs = (
     "Data::Printer" => 0,
     "Test::More" => 0
   },
-  "VERSION" => "0.001",
+  "VERSION" => "0.01",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -44,8 +42,6 @@ my %WriteMakefileArgs = (
 my %FallbackPrereqs = (
   "AnyEvent" => 0,
   "AnyEvent::WebSocket::Client" => 0,
-  "DDP" => 0,
-  "Data::Dumper" => 0,
   "Data::Printer" => 0,
   "JSON" => 0,
   "Moo" => 0,
