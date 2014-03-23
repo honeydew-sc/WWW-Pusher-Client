@@ -7,24 +7,39 @@ use AnyEvent;
 use Test::More;
 
 
+# BEGIN {
+#     unless (defined $ENV{PUSHER_KEY}) {
+#         plan skip_all => "Not running without PUSHER_KEY env var";
+#         done_testing;
 
-BEGIN {
-    unless (defined $ENV{PUSHER_KEY}) {
-        plan skip_all => "Not running without PUSHER_KEY env var";
-        done_testing;
+#         exit 0;
+#     }
+# }
 
-        exit 0;
-    }
-}
+use_ok('WWW::Pusher::Client');
+use lib('/opt/WWW-Pusher-Client/lib');
 
+# pusher_auth_key=7e2c5c7fb139355f9fa5
+# pusher_secret=11c506960c0e1c5d02cf
+
+my $fake_key = '278d425bdf160c739803';
+my $fake_secret = '7ad3773142a6692b25b8';
 my $client = WWW::Pusher::Client->new(
-    app_key => $ENV{PUSHER_KEY},
-    channel => 'my_channel'
+    app_key => $fake_key,
+    secret => $fake_secret
 );
 
 isa_ok($client, 'WWW::Pusher::Client');
 ok($client->ws_url =~ m/ws\.pusherapp\.com.*app.*protocol.*client.*version/, 'ws_url is formatted properly');
 
-$client->send('hello');
+SOCKET_AUTH: {
+    $client->_socket_id('1234.1234');
+    my $auth = $client->socket_auth('private-foobar');
+    cmp_ok($auth, 'eq', '58df8b0c36d6982b82c3ecf6b4662e34fe8c25bba48f5369f135bf843651c3a4', 'auth matches');
+}
+
+# use Data::Dumper; use DDP;
+# my $cv = AnyEvent->condvar;
+# $cv->recv;
 
 done_testing;

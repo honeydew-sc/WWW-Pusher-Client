@@ -6,15 +6,20 @@ use warnings;
 use Moo;
 use JSON;
 use AnyEvent::WebSocket::Client;
+use Digest::SHA qw(hmac_sha256_hex);
 
 has 'app_key' => (
     is => 'rw' ,
     required => 1
 );
 
-has 'channel' => (
+has 'secret' => (
     is => 'rw',
     required => 1
+);
+
+has 'channel' => (
+    is => 'rw',
 );
 
 has 'scheme' => (
@@ -76,23 +81,49 @@ has '_version' => (
     default => '0.001'
 );
 
+has '_socket_id' => (
+    is => 'rw',
+);
+
 sub BUILD {
     my $self = shift;
 
     $self->ws_conn->on(
         next_message => sub {
-            $self->subscribe($self->channel);
+            my ($conn, $message) = @_;
+            my $body = from_json($message->decoded_body);
+
+            use Data::Dumper; use DDP;
+            p $body;
+            if ($body->{event} eq 'pusher:connection_established') {
+                $self->_socket_id(from_json($body->{data})->{socket_id});
+            }
+            else {
+                die 'Connection error?' . $message->decoded_body;
+            }
         });
 }
 
 sub subscribe {
     my $self = shift;
+    my $data = {
+        channel => $self->channel
+    };
+    if ($self->channel =~ /^private\-/) {
+        $data->{auth} = $self->socket_auth($self->channel);
+    }
     $self->ws_conn->send(to_json({
         event => 'pusher:subscribe',
-        data => {
-            channel => $self->channel
-        }
+        data => $data
     }));
+}
+
+sub socket_auth {
+    my ($self, $channel) = @_;
+    die 'Missing socket_id, sorry...' unless $self->_socket_id;
+
+    my $plainSignature = $self->_socket_id . ':' . $channel;
+    return hmac_sha256_hex($plainSignature, $self->secret);
 }
 
 sub trigger {
