@@ -168,10 +168,12 @@ is a Perl client for their interface.
 
 =head2 new
 
-Get a client to interact with the Pusher API. You can optionally pass in a channel to subscribe to it after the initial connection, or subscribe manually later on your own.
+Get a client to interact with the Pusher API. You can optionally pass
+in a channel to subscribe to it after the initial connection, or
+subscribe manually later on your own.
 
     use WWW::Pusher::Client;
-    my $client =  WWW::Pusher::Client->new(
+    my $pusher =  WWW::Pusher::Client->new(
         auth_key => $ENV{AUTH_KEY},
         secret => $ENV{SECRET},
         channel => $config->channel, // optional
@@ -184,7 +186,8 @@ channels, but not presence channels. The authentication for private
 channels is automatically handled for you if your channel name is
 prefixed with 'private-'.
 
-    $pusher->subscribe('private-channel-with-auth');
+    $pusher->subscribe('pubs-are-easy-to-join');
+    $pusher->subscribe('private-channels-are-supported');
 
 =head2 trigger
 
