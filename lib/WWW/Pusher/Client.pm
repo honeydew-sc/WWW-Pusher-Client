@@ -8,7 +8,7 @@ use JSON;
 use AnyEvent::WebSocket::Client;
 use Digest::SHA qw(hmac_sha256_hex);
 
-has 'app_key' => (
+has 'auth_key' => (
     is => 'rw' ,
     required => 1
 );
@@ -46,7 +46,7 @@ has 'ws_url' => (
         my $self = shift;
 
         return $self->{scheme} . $self->{_pusher_base} . $self->{port}
-        . "/app/" . $self->{app_key}
+        . "/app/" . $self->{auth_key}
         . "?protocol=" . $self->{_protocol}
         . "&client=" . $self->{_client_name}
         . "&version=" . $self->{_version}
@@ -85,6 +85,26 @@ has '_version' => (
 has '_socket_id' => (
     is => 'rw',
 );
+
+
+sub BUILD {
+    my $self = shift;
+
+    $self->ws_conn->on(
+        next_message => sub {
+            my ($conn, $message) = @_;
+            my $body = from_json($message->decoded_body);
+
+            if ($body->{event} eq 'pusher:connection_established') {
+                $self->_socket_id(from_json($body->{data})->{socket_id});
+
+                $self->subscribe($self->channel) if $self->has_channel;
+            }
+            else {
+                die 'Connection error?' . $message->decoded_body;
+            }
+        });
+}
 
 
 sub subscribe {
@@ -150,31 +170,12 @@ is a Perl client for their interface.
 
 Get a client to interact with the Pusher API. You can optionally pass in a channel to subscribe to it after the initial connection, or subscribe manually later on your own.
 
-use WWW::Pusher::Client;
-my $client =  WWW::Pusher::Client->new(
-    app_key => $ENV{PUSHER_AUTH_KEY},
-    secret => $ENV{PUSHER_SECRET},
-    channel => $config->channel, // optional
-);
-
-sub BUILD {
-    my $self = shift;
-
-    $self->ws_conn->on(
-        next_message => sub {
-            my ($conn, $message) = @_;
-            my $body = from_json($message->decoded_body);
-
-            if ($body->{event} eq 'pusher:connection_established') {
-                $self->_socket_id(from_json($body->{data})->{socket_id});
-
-                $self->subscribe($self->channel) if $self->has_channel;
-            }
-            else {
-                die 'Connection error?' . $message->decoded_body;
-            }
-        });
-}
+    use WWW::Pusher::Client;
+    my $client =  WWW::Pusher::Client->new(
+        auth_key => $ENV{AUTH_KEY},
+        secret => $ENV{SECRET},
+        channel => $config->channel, // optional
+    );
 
 =head2 subscribe
 

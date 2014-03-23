@@ -18,11 +18,11 @@ use Test::More;
 
 use_ok('WWW::Pusher::Client');
 
-my $fake_key = '278d425bdf160c739803';
+my $fake_auth = '278d425bdf160c739803';
 my $fake_secret = '7ad3773142a6692b25b8';
 
 my $client = WWW::Pusher::Client->new(
-    app_key => $fake_key,
+    auth_key => $fake_auth,
     secret => $fake_secret
 );
 

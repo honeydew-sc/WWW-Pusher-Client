@@ -17,31 +17,12 @@ is a Perl client for their interface.
 
 Get a client to interact with the Pusher API. You can optionally pass in a channel to subscribe to it after the initial connection, or subscribe manually later on your own.
 
-use WWW::Pusher::Client;
-my $client =  WWW::Pusher::Client->new(
-    app\_key => $ENV{PUSHER\_AUTH\_KEY},
-    secret => $ENV{PUSHER\_SECRET},
-    channel => $config->channel, // optional
-);
-
-sub BUILD {
-    my $self = shift;
-
-    $self->ws_conn->on(
-        next_message => sub {
-            my ($conn, $message) = @_;
-            my $body = from_json($message->decoded_body);
-
-            if ($body->{event} eq 'pusher:connection_established') {
-                $self->_socket_id(from_json($body->{data})->{socket_id});
-
-                $self->subscribe($self->channel) if $self->has_channel;
-            }
-            else {
-                die 'Connection error?' . $message->decoded_body;
-            }
-        });
-}
+    use WWW::Pusher::Client;
+    my $client =  WWW::Pusher::Client->new(
+        auth_key => $ENV{AUTH_KEY},
+        secret => $ENV{SECRET},
+        channel => $config->channel, // optional
+    );
 
 ## subscribe
 
