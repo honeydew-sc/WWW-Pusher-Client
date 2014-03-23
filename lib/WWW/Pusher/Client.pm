@@ -20,6 +20,7 @@ has 'secret' => (
 
 has 'channel' => (
     is => 'rw',
+    predicate => 'has_channel'
 );
 
 has 'scheme' => (
@@ -93,10 +94,10 @@ sub BUILD {
             my ($conn, $message) = @_;
             my $body = from_json($message->decoded_body);
 
-            use Data::Dumper; use DDP;
-            p $body;
             if ($body->{event} eq 'pusher:connection_established') {
                 $self->_socket_id(from_json($body->{data})->{socket_id});
+
+                $self->subscribe($self->channel) if $self->has_channel;
             }
             else {
                 die 'Connection error?' . $message->decoded_body;

@@ -6,7 +6,6 @@ build_requires:
   AnyEvent: '0'
   Data::Printer: '0'
   Test::More: '0'
-  lib: '0'
 configure_requires:
   ExtUtils::MakeMaker: '6.30'
 dynamic_config: 0
@@ -18,8 +17,6 @@ meta-spec:
 name: WWW-Pusher-Client
 requires:
   AnyEvent::WebSocket::Client: '0'
-  DDP: '0'
-  Data::Dumper: '0'
   Digest::SHA: '0'
   JSON: '0'
   Moo: '0'
