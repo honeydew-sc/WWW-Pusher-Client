@@ -7,7 +7,7 @@ use Moo;
 use JSON;
 use AnyEvent::WebSocket::Client;
 
-has 'app_key' => (
+has 'auth_key' => (
     is => 'rw' ,
     required => 1
 );
@@ -40,7 +40,7 @@ has 'ws_url' => (
         my $self = shift;
 
         return $self->{scheme} . $self->{_pusher_base} . $self->{port}
-        . "/app/" . $self->{app_key}
+        . "/app/" . $self->{auth_key}
         . "?protocol=" . $self->{_protocol}
         . "&client=" . $self->{_client_name}
         . "&version=" . $self->{_version}

@@ -15,9 +15,12 @@ BEGIN {
     }
 }
 
+my $fake_auth = '278d425bdf160c739803';
+my $fake_secret = '7ad3773142a6692b25b8';
+
 my $client = WWW::Pusher::Client->new(
-    app_key => $ENV{PUSHER_KEY},
-    channel => 'my_channel'
+    auth_key => $fake_auth,
+    secret => $fake_secret
 );
 
 isa_ok($client, 'WWW::Pusher::Client');
