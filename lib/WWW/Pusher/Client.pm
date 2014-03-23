@@ -174,6 +174,27 @@ sub trigger {
     }));
 }
 
+=method bind
+
+Bind to certain events on the currently subscribed channel
+
+    $pusher->bind('listen_event', sub { print shift });
+
+=cut
+
+sub bind {
+    my ($self, $event, $callback) = @_;
+
+    $self->ws_conn->on(
+        each_message => sub {
+            my ($conn, $msg) = @_;
+            $msg = from_json($msg->body);
+            if ($msg->event eq $event) {
+                $callback($msg);
+            }
+        });
+}
+
 =head1 SYNOPSIS
 
 Pusher is a hosted API for the websocket protocol. WWW::Pusher::Client
@@ -187,6 +208,11 @@ C<trigger> both use the most recent channel as defaults.
         secret => $ENV{SECRET},
         channel => 'private-channel'
     );
+
+    $pusher->bind('my_event', sub {
+        my ($event, $data) = shift;
+        print 'my_event: ' . $data;
+    });
 
     use JSON;
     $pusher->trigger('my_event', 'this is some data that isn\'t JSON');
