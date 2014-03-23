@@ -162,7 +162,26 @@ version 0.02
 =head1 SYNOPSIS
 
 Pusher is a hosted API for the websocket protocol. WWW::Pusher::Client
-is a Perl client for their interface.
+is a laughably incomplete Perl client for their interface. It's really
+only suited for joining one channel in its lifetime - C<bind> and
+C<trigger> both use the most recent channel as defaults.
+
+    use WWW::Pusher::Client;
+    my $pusher =  WWW::Pusher::Client->new(
+        auth_key => $ENV{AUTH_KEY},
+        secret => $ENV{SECRET},
+        channel => 'private-channel'
+    );
+
+    $pusher->bind('my_event', sub {
+        my $data = shift;
+        print 'my_event: ' . $data;
+    });
+
+    $pusher->trigger('my_event', 'this is some data that isn\'t JSON');
+    $pusher->trigger('my_event', to_json({
+        json => 'json also works!'
+    });
 
 =head1 METHODS
 
@@ -176,7 +195,7 @@ subscribe manually later on your own.
     my $pusher =  WWW::Pusher::Client->new(
         auth_key => $ENV{AUTH_KEY},
         secret => $ENV{SECRET},
-        channel => $config->channel, // optional
+        channel => 'default-channel' // optional
     );
 
 =head2 subscribe
