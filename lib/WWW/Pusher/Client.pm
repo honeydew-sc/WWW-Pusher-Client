@@ -86,6 +86,77 @@ has '_socket_id' => (
     is => 'rw',
 );
 
+
+sub subscribe {
+    my $self = shift;
+    my $data = {
+        channel => $self->channel
+    };
+    if ($self->channel =~ /^private\-/) {
+        $data->{auth} = $self->_socket_auth($self->channel);
+    }
+    $self->ws_conn->send(to_json({
+        event => 'pusher:subscribe',
+        data => $data
+    }));
+}
+
+sub _socket_auth {
+    my ($self, $channel) = @_;
+    die 'Missing socket_id, sorry...' unless $self->_socket_id;
+
+    my $plainSignature = $self->_socket_id . ':' . $channel;
+    return hmac_sha256_hex($plainSignature, $self->secret);
+}
+
+
+sub trigger {
+    my $self = shift;
+    my $event = shift // 'ws update';
+    my $message = shift;
+
+    $self->ws_conn->send(to_json({
+        event => $event,
+        channel => $self->channel,
+        data => $message
+    }));
+}
+
+
+1;
+
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+WWW::Pusher::Client - Laughably incomplete Perl client for Pusher WS API
+
+=head1 VERSION
+
+version 0.02
+
+=head1 SYNOPSIS
+
+Pusher is a hosted API for the websocket protocol. WWW::Pusher::Client
+is a Perl client for their interface.
+
+=head1 METHODS
+
+=head2 new
+
+Get a client to interact with the Pusher API. You can optionally pass in a channel to subscribe to it after the initial connection, or subscribe manually later on your own.
+
+use WWW::Pusher::Client;
+my $client =  WWW::Pusher::Client->new(
+    app_key => $ENV{PUSHER_AUTH_KEY},
+    secret => $ENV{PUSHER_SECRET},
+    channel => $config->channel, // optional
+);
+
 sub BUILD {
     my $self = shift;
 
@@ -105,55 +176,20 @@ sub BUILD {
         });
 }
 
-sub subscribe {
-    my $self = shift;
-    my $data = {
-        channel => $self->channel
-    };
-    if ($self->channel =~ /^private\-/) {
-        $data->{auth} = $self->socket_auth($self->channel);
-    }
-    $self->ws_conn->send(to_json({
-        event => 'pusher:subscribe',
-        data => $data
-    }));
-}
+=head2 subscribe
 
-sub socket_auth {
-    my ($self, $channel) = @_;
-    die 'Missing socket_id, sorry...' unless $self->_socket_id;
+Subscribe to a Pusher channel; currently supporting public and private
+channels, but not presence channels. The authentication for private
+channels is automatically handled for you if your channel name is
+prefixed with 'private-'.
 
-    my $plainSignature = $self->_socket_id . ':' . $channel;
-    return hmac_sha256_hex($plainSignature, $self->secret);
-}
+    $pusher->subscribe('private-channel-with-auth');
 
-sub trigger {
-    my $self = shift;
-    my $event = shift // 'ws update';
-    my $message = shift;
+=head2 trigger
 
-    $self->ws_conn->send(to_json({
-        event => $event,
-        channel => $self->channel,
-        data => $message
-    }));
-}
+Trigger an event & message on the currently subscribed channel.
 
-1;
-
-__END__
-
-=pod
-
-=encoding UTF-8
-
-=head1 NAME
-
-WWW::Pusher::Client - Laughably incomplete Perl client for Pusher WS API
-
-=head1 VERSION
-
-version 0.01
+    $pusher->trigger('my_event', 'this is the message!');
 
 =head1 AUTHOR
 
