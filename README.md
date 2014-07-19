@@ -13,17 +13,11 @@ is a laughably incomplete Perl client for their interface. It's really
 only suited for joining one channel in its lifetime - `bind` and
 `trigger` both use the most recent channel as defaults.
 
-    use WWW::Pusher::Client;
     my $pusher =  WWW::Pusher::Client->new(
         auth_key => $ENV{AUTH_KEY},
         secret => $ENV{SECRET},
         channel => 'private-channel'
     );
-
-    $pusher->bind('my_event', sub {
-        my $data = shift;
-        print 'my_event: ' . $data;
-    });
 
     $pusher->trigger('my_event', 'this is some data that isn\'t JSON');
     $pusher->trigger('my_event', to_json({
@@ -40,8 +34,8 @@ subscribe manually later on your own.
 
     use WWW::Pusher::Client;
     my $pusher =  WWW::Pusher::Client->new(
-        auth_key => $ENV{AUTH_KEY},
-        secret => $ENV{SECRET},
+        auth_key => $ENV{AUTH_KEY},  // required
+        secret => $ENV{SECRET},      // required
         channel => 'default-channel' // optional
     );
 
