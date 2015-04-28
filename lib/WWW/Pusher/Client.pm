@@ -161,22 +161,31 @@ prefixed with 'private-'.
 =cut
 
 sub subscribe {
-    my $self = shift;
-    my $data = {
-        channel => $self->channel
-    };
+    my ($self, $channel) = @_;
 
-    # Private channels need a key:signature in the auth key for
-    # acceptance.
-    if ($self->channel =~ /^private\-/) {
-        my $signature = $self->_socket_auth($self->channel);
-        $data->{auth} = $self->auth_key . ':' . $signature;
-    }
+    my $data = $self->_construct_private_auth_data($channel);
 
-    $self->ws_conn->send(to_json({
+    return $self->ws_conn->send(to_json({
         event => 'pusher:subscribe',
         data => $data
     }));
+}
+
+sub _construct_private_auth_data {
+    my ($self, $channel) = @_;
+    $channel //= $self->channel;
+
+    # Public channels only need the channel name in the payload
+    my $data = { channel => $channel };
+
+    # Private channels need a key:signature in the auth key for
+    # authorization
+    if ($channel =~ /^private-/) {
+        my $signature = $self->_socket_auth($channel);
+        $data->{auth} = $self->auth_key . ':' . $signature;
+    }
+
+    return $data;
 }
 
 sub _socket_auth {
