@@ -3,6 +3,7 @@ package WWW::Pusher::Client;
 
 use strict;
 use warnings;
+use 5.010_001;
 use Moo;
 use JSON;
 use AnyEvent::WebSocket::Client;
