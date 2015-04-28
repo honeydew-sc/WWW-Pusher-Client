@@ -2,15 +2,12 @@
 
 use strict;
 use warnings;
-use Data::Printer;
 use AnyEvent;
 use Test::More;
-
 
 BEGIN {
     unless (use_ok('WWW::Pusher::Client')) {
         plan skip_all => "Not running without PUSHER_KEY env var";
-        done_testing;
         exit 0;
     }
 }
@@ -34,7 +31,6 @@ SOCKET_AUTH: {
     cmp_ok($auth, 'eq', '58df8b0c36d6982b82c3ecf6b4662e34fe8c25bba48f5369f135bf843651c3a4', 'fake auth matches');
 }
 
-# use Data::Dumper; use DDP;
 # my $cv = AnyEvent->condvar;
 # $cv->recv;
 
