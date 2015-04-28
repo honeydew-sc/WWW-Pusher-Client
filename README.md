@@ -4,7 +4,7 @@ WWW::Pusher::Client - Laughably incomplete Perl client for Pusher WS API
 
 # VERSION
 
-version 0.01
+version 0.02
 
 # SYNOPSIS
 
