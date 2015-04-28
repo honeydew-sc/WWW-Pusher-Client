@@ -4,7 +4,7 @@ WWW::Pusher::Client - Laughably incomplete Perl client for Pusher WS API
 
 # VERSION
 
-version 0.02
+version 0.03
 
 # SYNOPSIS
 
@@ -64,11 +64,27 @@ Trigger an event & message on the currently subscribed channel.
 
 # SEE ALSO
 
-WWW::Pusher
+Please see those modules/websites for more information related to this module.
+
+- [WWW::Pusher](https://metacpan.org/pod/WWW::Pusher)
+
+# BUGS
+
+Please report any bugs or feature requests on the bugtracker website
+https://github.com/honeydew-sc/WWW-Pusher-Client/issues
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 # AUTHOR
 
 Daniel Gempesaw <gempesaw@gmail.com>
+
+# CONTRIBUTORS
+
+- Syohei YOSHIDA <syohex@gmail.com>
+- gempesaw <gempesaw@gmail.com>
 
 # COPYRIGHT AND LICENSE
 
