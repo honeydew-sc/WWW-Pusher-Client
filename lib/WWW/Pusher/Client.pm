@@ -164,9 +164,14 @@ sub subscribe {
     my $data = {
         channel => $self->channel
     };
+
+    # Private channels need a key:signature in the auth key for
+    # acceptance.
     if ($self->channel =~ /^private\-/) {
-        $data->{auth} = $self->_socket_auth($self->channel);
+        my $signature = $self->_socket_auth($self->channel);
+        $data->{auth} = $self->auth_key . ':' . $signature;
     }
+
     $self->ws_conn->send(to_json({
         event => 'pusher:subscribe',
         data => $data
