@@ -54,7 +54,7 @@ has 'channel' => (
 has 'client' => (
     is => 'ro',
     lazy => 1,
-    default => sub { shift->{client} // AnyEvent::WebSocket::Client->new }
+    default => sub { AnyEvent::WebSocket::Client->new }
 );
 
 has 'ws_url' => (
@@ -76,7 +76,10 @@ has 'ws_conn' => (
     lazy => 1,
     builder => sub {
         my $self = shift;
-        return AnyEvent::WebSocket::Client->new->connect($self->ws_url)->recv;
+
+        # open the connection and immediately ->recv the condvar to
+        # return control back to us
+        return $self->client->connect($self->ws_url)->recv;
     }
 );
 
