@@ -26,6 +26,11 @@ only the most recent channel as defaults.
         json => 'json also works!'
     });
 
+The main difference between this module and [WWW::Pusher](https://metacpan.org/pod/WWW::Pusher) is that
+this module enables you to subscribe to channels like the WebSocket
+Pusher clients allow you to do. [WWW::Pusher](https://metacpan.org/pod/WWW::Pusher) interacts with Pusher
+via its HTTP API, which doesn't allow for subscriptions.
+
 # METHODS
 
 ## new
@@ -57,13 +62,17 @@ Trigger an event & message on the currently subscribed channel.
 
     $pusher->trigger('my_event', 'this is the message!');
 
+# SEE ALSO
+
+WWW::Pusher
+
 # AUTHOR
 
 Daniel Gempesaw <gempesaw@gmail.com>
 
 # COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by Daniel Gempesaw.
+This software is copyright (c) 2015 by Daniel Gempesaw.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
