@@ -8,6 +8,33 @@ use JSON;
 use AnyEvent::WebSocket::Client;
 use Digest::SHA qw(hmac_sha256_hex);
 
+=head1 SYNOPSIS
+
+Pusher is a hosted API for the websocket protocol. WWW::Pusher::Client
+is a laughably incomplete Perl client for their interface. It's really
+only suited for joining one channel in its lifetime - C<trigger> uses
+only the most recent channel as defaults.
+
+    use WWW::Pusher::Client;
+    my $pusher =  WWW::Pusher::Client->new(
+        auth_key => $ENV{AUTH_KEY},
+        secret => $ENV{SECRET},
+        channel => 'private-channel'
+    );
+
+    use JSON;
+    $pusher->trigger('my_event', 'this is some data that isn\'t JSON');
+    $pusher->trigger('my_event', to_json({
+        json => 'json also works!'
+    });
+
+The main difference between this module and L<WWW::Pusher> is that
+this module enables you to subscribe to channels like the WebSocket
+Pusher clients allow you to do. L<WWW::Pusher> interacts with Pusher
+via its HTTP API, which doesn't allow for subscriptions.
+
+=cut
+
 has 'auth_key' => (
     is => 'rw' ,
     required => 1
@@ -174,25 +201,9 @@ sub trigger {
     }));
 }
 
-=head1 SYNOPSIS
+=head1 SEE ALSO
 
-Pusher is a hosted API for the websocket protocol. WWW::Pusher::Client
-is a laughably incomplete Perl client for their interface. It's really
-only suited for joining one channel in its lifetime - C<trigger> uses
-only the most recent channel as defaults.
-
-    use WWW::Pusher::Client;
-    my $pusher =  WWW::Pusher::Client->new(
-        auth_key => $ENV{AUTH_KEY},
-        secret => $ENV{SECRET},
-        channel => 'private-channel'
-    );
-
-    use JSON;
-    $pusher->trigger('my_event', 'this is some data that isn\'t JSON');
-    $pusher->trigger('my_event', to_json({
-        json => 'json also works!'
-    });
+WWW::Pusher
 
 =cut
 
