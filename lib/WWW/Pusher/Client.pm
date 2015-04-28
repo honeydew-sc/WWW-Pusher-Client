@@ -32,7 +32,10 @@ only the most recent channel as defaults.
 The main difference between this module and L<WWW::Pusher> is that
 this module enables you to subscribe to channels like the WebSocket
 Pusher clients allow you to do. L<WWW::Pusher> interacts with Pusher
-via its HTTP API, which doesn't allow for subscriptions.
+via its HTTP API, which doesn't allow for subscriptions. On the other
+hand, this module uses L</AnyEvent::WebSocket::Client> to join
+channels via websockets and receive real time messages in addition to
+triggering them.
 
 =cut
 
