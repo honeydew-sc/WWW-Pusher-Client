@@ -37,12 +37,12 @@ via its HTTP API, which doesn't allow for subscriptions.
 =cut
 
 has 'auth_key' => (
-    is => 'rw' ,
+    is => 'ro' ,
     required => 1
 );
 
 has 'secret' => (
-    is => 'rw',
+    is => 'ro',
     required => 1
 );
 
@@ -52,7 +52,7 @@ has 'channel' => (
 );
 
 has 'client' => (
-    is => 'rw',
+    is => 'ro',
     lazy => 1,
     default => sub { shift->{client} // AnyEvent::WebSocket::Client->new }
 );
@@ -72,7 +72,7 @@ has 'ws_url' => (
 );
 
 has 'ws_conn' => (
-    is => 'rw',
+    is => 'ro',
     lazy => 1,
     builder => sub {
         my $self = shift;
@@ -111,7 +111,7 @@ has '_version' => (
 );
 
 has '_socket_id' => (
-    is => 'rw',
+    is => 'rw'
 );
 
 =method new
