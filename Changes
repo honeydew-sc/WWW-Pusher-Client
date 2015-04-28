@@ -1,4 +1,7 @@
 Revision history for perl module WWW-Pusher-Client
 
+0.02 2015-04-27
+ - Fix authentication to private channels
+
 0.01
  - Initial Release
