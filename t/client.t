@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 use AnyEvent;
-use Test::More;
+use Test::Spec;
 
 BEGIN {
     unless (use_ok('WWW::Pusher::Client')) {
@@ -12,29 +12,6 @@ BEGIN {
     }
 }
 
-my $fake_auth = '278d425bdf160c739803';
-my $fake_secret = '7ad3773142a6692b25b8';
-
-my $client = WWW::Pusher::Client->new(
-    auth_key => $fake_auth,
-    secret => $fake_secret
-);
-
-PUSHER_PROTOCOL: {
-    isa_ok($client, 'WWW::Pusher::Client');
-    ok($client->ws_url =~ m/ws\.pusherapp\.com.*app.*protocol.*client.*version/, 'ws_url is formatted properly');
-}
-
-SOCKET_AUTH: {
-    $client->_socket_id('1234.1234');
-    my $auth = $client->_socket_auth('private-foobar');
-    cmp_ok($auth, 'eq', '58df8b0c36d6982b82c3ecf6b4662e34fe8c25bba48f5369f135bf843651c3a4', 'fake auth matches');
-}
-
-# my $cv = AnyEvent->condvar;
-# $cv->recv;
-
-done_testing;
 describe 'Pusher Client' => sub {
     my ($client);
 
@@ -51,6 +28,34 @@ describe 'Pusher Client' => sub {
 
     it 'should format the ws_url properly' => sub {
         like($client->ws_url, qr/ws\.pusherapp\.com.*app.*protocol.*client.*version/);
+    };
+
+    describe 'authentication' => sub {
+        before each => sub {
+            $client->_socket_id('1234.1234');
+        };
+
+        it 'should properly construct socket auth signatures' => sub {
+            my $auth = $client->_socket_auth('private-foobar');
+            is($auth, '58df8b0c36d6982b82c3ecf6b4662e34fe8c25bba48f5369f135bf843651c3a4');
+        };
+
+        it 'should submit an key:signature for private channel auth' => sub {
+            my $private_channel = 'private-fake-channel';
+            my $data = $client->_construct_private_auth_data($private_channel);
+
+            is($data->{auth},
+               '278d425bdf160c739803:910dc5795badbf230a7510131e786c906e2d5dfb7f209f27a0945373bcc46615');
+            is($data->{channel}, $private_channel)
+        };
+
+        it 'should only submit the channel for public channels' => sub {
+            my $public_channel = 'fake-public-channel';
+            my $data = $client->_construct_private_auth_data($public_channel);
+            ok(not exists $data->{auth});
+            is($data->{channel}, $public_channel);
+        };
+
     };
 };
 
