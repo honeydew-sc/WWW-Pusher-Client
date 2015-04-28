@@ -35,3 +35,23 @@ SOCKET_AUTH: {
 # $cv->recv;
 
 done_testing;
+describe 'Pusher Client' => sub {
+    my ($client);
+
+    # These fake credentials are found in Pusher's online
+    # documentation about authentication
+    my %fake_args = (
+        auth_key => '278d425bdf160c739803',
+        secret => '7ad3773142a6692b25b8'
+    );
+
+    before each => sub {
+        $client = WWW::Pusher::Client->new(%fake_args);
+    };
+
+    it 'should format the ws_url properly' => sub {
+        like($client->ws_url, qr/ws\.pusherapp\.com.*app.*protocol.*client.*version/);
+    };
+};
+
+runtests;

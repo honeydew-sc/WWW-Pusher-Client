@@ -51,16 +51,6 @@ has 'channel' => (
     predicate => 'has_channel'
 );
 
-has 'scheme' => (
-    is => 'rw',
-    default => 'ws'
-);
-
-has 'port' => (
-    is => 'rw',
-    default => 80
-);
-
 has 'client' => (
     is => 'rw',
     lazy => 1,
@@ -73,11 +63,11 @@ has 'ws_url' => (
     builder => sub {
         my $self = shift;
 
-        return $self->{scheme} . $self->{_pusher_base} . $self->{port}
-        . "/app/" . $self->{auth_key}
-        . "?protocol=" . $self->{_protocol}
-        . "&client=" . $self->{_client_name}
-        . "&version=" . $self->{_version}
+        return $self->_scheme . $self->_pusher_base . $self->_port
+          . "/app/" . $self->auth_key
+          . "?protocol=" . $self->_protocol
+          . "&client=" . $self->_client_name
+          . "&version=" . $self->_version
     }
 );
 
@@ -90,24 +80,34 @@ has 'ws_conn' => (
     }
 );
 
+has '_scheme' => (
+    is => 'ro',
+    default => sub { 'ws' }
+);
+
+has '_port' => (
+    is => 'ro',
+    default => sub { 80 }
+);
+
 has '_pusher_base' => (
     is => 'ro',
-    default => '://ws.pusherapp.com:'
+    default => sub { '://ws.pusherapp.com:' }
 );
 
 has '_protocol' => (
     is => 'ro',
-    default => 7
+    default => sub { 7 }
 );
 
 has '_client_name' => (
     is => 'ro',
-    default => 'perl-pusher-client'
+    default => sub { 'perl-pusher-client' }
 );
 
 has '_version' => (
     is => 'ro',
-    default => '0.001'
+    default => sub { '0.001' }
 );
 
 has '_socket_id' => (
