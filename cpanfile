@@ -1,4 +1,5 @@
 requires "AnyEvent::WebSocket::Client" => "0";
+requires "Carp" => "0";
 requires "Digest::SHA" => "0";
 requires "JSON" => "0";
 requires "Moo" => "0";
@@ -8,6 +9,7 @@ requires "warnings" => "0";
 
 on 'test' => sub {
   requires "AnyEvent" => "0";
+  requires "Test::Fatal" => "0";
   requires "Test::Spec" => "0";
 };
 
