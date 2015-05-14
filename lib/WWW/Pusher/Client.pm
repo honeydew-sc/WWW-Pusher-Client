@@ -6,6 +6,7 @@ use warnings;
 use 5.010_001;
 use Moo;
 use JSON;
+use Carp;
 use AnyEvent::WebSocket::Client;
 use Digest::SHA qw(hmac_sha256_hex);
 
@@ -117,7 +118,17 @@ has '_version' => (
 );
 
 has '_socket_id' => (
-    is => 'rw'
+    is => 'rw',
+    coerce => sub {
+        my ($socket_id) = @_;
+
+        if ($socket_id =~ /^\d+\.\d+$/) {
+            return $socket_id;
+        }
+        else {
+            croak 'socket_id is an invalid format';
+        }
+    }
 );
 
 =method new

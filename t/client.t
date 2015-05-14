@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use AnyEvent;
 use Test::Spec;
+use Test::Fatal;
 
 BEGIN {
     unless (use_ok('WWW::Pusher::Client')) {
@@ -54,6 +55,18 @@ describe 'Pusher Client' => sub {
             my $data = $client->_construct_private_auth_data($public_channel);
             ok(not exists $data->{auth});
             is($data->{channel}, $public_channel);
+        };
+
+    };
+
+    describe 'forged signature exploit fix' => sub {
+        my ($socket_id, $channel);
+
+        it 'should reject invalid socket ids' => sub {
+            my $invalid_id = 'invalid';
+            like( exception { $client->_socket_id( $invalid_id ) },
+                  qr/socket_id is an invalid format/
+              );
         };
 
     };
