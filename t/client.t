@@ -64,11 +64,13 @@ describe 'Pusher Client' => sub {
 
         it 'should reject invalid socket ids' => sub {
             my $invalid_id = 'invalid';
-            like( exception { $client->_socket_id( $invalid_id ) },
-                  qr/socket_id is an invalid format/
-              );
+            like( exception { $client->_socket_id( $invalid_id ) }, qr/invalid/ );
         };
 
+        it 'should reject invalid channel names' => sub {
+            my $invalid_channel = 'bad channel %';
+            like( exception { $client->channel( $invalid_channel ) }, qr/invalid/);
+        };
     };
 };
 

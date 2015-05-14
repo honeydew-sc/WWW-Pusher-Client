@@ -52,6 +52,16 @@ has 'secret' => (
 
 has 'channel' => (
     is => 'rw',
+    coerce => sub {
+        my ($channel) = @_;
+
+        if ($channel =~ /^[A-Za-z0-9_\-=@,.;]+$/) {
+            return $channel;
+        }
+        else {
+            croak 'channel is invalid';
+        }
+    },
     predicate => 'has_channel'
 );
 
@@ -126,7 +136,7 @@ has '_socket_id' => (
             return $socket_id;
         }
         else {
-            croak 'socket_id is an invalid format';
+            croak 'socket_id is invalid';
         }
     }
 );
